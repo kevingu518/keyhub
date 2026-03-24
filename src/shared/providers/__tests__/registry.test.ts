@@ -2,12 +2,17 @@ import { describe, it, expect } from 'vitest';
 import { detectProvider, maskKey, getProvider } from '../registry';
 
 describe('detectProvider', () => {
-  it('should detect OpenAI keys', () => {
-    expect(detectProvider('sk-abcdefghijklmnopqrstuvwx')).toBe('openai');
+  it('should detect OpenAI keys (sk-proj- prefix)', () => {
+    expect(detectProvider('sk-proj-abcdefghijklmnopqrstuvwx')).toBe('openai');
   });
 
-  it('should detect Anthropic keys before OpenAI', () => {
+  it('should detect Anthropic keys', () => {
     expect(detectProvider('sk-ant-abcdefghijklmnopqrstuvwx')).toBe('anthropic');
+  });
+
+  it('should NOT auto-detect sk- keys as OpenAI (could be DeepSeek)', () => {
+    // sk- without sk-proj- or sk-ant- falls through to custom
+    expect(detectProvider('sk-abcdefghijklmnopqrstuvwx')).toBe('custom');
   });
 
   it('should detect Google AI keys', () => {

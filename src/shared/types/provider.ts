@@ -1,6 +1,7 @@
 export type ProviderId =
   | 'openai'
   | 'anthropic'
+  | 'deepseek'
   | 'google'
   | 'mistral'
   | 'serpapi'
