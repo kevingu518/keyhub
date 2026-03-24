@@ -14,7 +14,7 @@ Chrome 擴充功能，安全儲存與管理 AI API Key。所有資料使用 AES-
 
 ## 支援的供應商
 
-OpenAI · Anthropic · Google AI · Mistral · SerpAPI · ElevenLabs · Replicate · Hugging Face · 自訂
+OpenAI · Anthropic · DeepSeek · Google AI · Mistral · SerpAPI · ElevenLabs · Replicate · Hugging Face · 自訂
 
 ## 技術架構
 

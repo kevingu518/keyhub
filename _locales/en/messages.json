@@ -1,5 +1,5 @@
 {
   "extensionName": { "message": "KeyHub" },
-  "extensionDescription": { "message": "AI API Key Manager — Secure storage, auto-detect, usage tracking" },
+  "extensionDescription": { "message": "AI API Key Manager — Encrypted local vault with auto-detect" },
   "actionTitle": { "message": "Open KeyHub" }
 }
