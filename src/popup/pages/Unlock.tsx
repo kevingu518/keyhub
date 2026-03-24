@@ -2,6 +2,7 @@ import { signal } from '@preact/signals';
 import { decryptVault } from '@/shared/crypto/vault';
 import { loadVault } from '@/shared/storage/vault-store';
 import { currentPage, masterPassword, keys, vaultSalt } from '../App';
+import { t } from '@/shared/i18n';
 
 const pw = signal('');
 const error = signal('');
@@ -15,10 +16,7 @@ export function Unlock() {
 
     try {
       const vault = await loadVault();
-      if (!vault) {
-        currentPage.value = 'setup';
-        return;
-      }
+      if (!vault) { currentPage.value = 'setup'; return; }
 
       const decrypted = await decryptVault(vault, pw.value);
       masterPassword.value = pw.value;
@@ -26,7 +24,7 @@ export function Unlock() {
       keys.value = decrypted;
       currentPage.value = 'list';
     } catch {
-      error.value = 'Wrong password';
+      error.value = t('unlockError');
     } finally {
       loading.value = false;
     }
@@ -37,8 +35,8 @@ export function Unlock() {
       <div style={{ width: '56px', height: '56px', borderRadius: '16px', background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', fontSize: '28px' }}>
         🔐
       </div>
-      <h1 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '4px' }}>KeyHub</h1>
-      <p style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '24px' }}>Unlock your vault</p>
+      <h1 style={{ fontSize: '22px', fontWeight: 700, marginBottom: '4px' }}>{t('appName')}</h1>
+      <p style={{ fontSize: '13px', color: '#94a3b8', marginBottom: '24px' }}>{t('unlockTitle')}</p>
 
       <div style={{ width: '100%' }}>
         <input
@@ -46,19 +44,14 @@ export function Unlock() {
           value={pw.value}
           onInput={(e) => { pw.value = (e.target as HTMLInputElement).value; error.value = ''; }}
           onKeyDown={(e) => e.key === 'Enter' && handleUnlock()}
-          placeholder="Master Password"
+          placeholder={t('unlockPassword')}
           disabled={loading.value}
           autoFocus
           style={{
-            width: '100%',
-            padding: '10px 14px',
+            width: '100%', padding: '10px 14px',
             border: `1px solid ${error.value ? '#ef4444' : '#334155'}`,
-            borderRadius: '10px',
-            fontSize: '14px',
-            outline: 'none',
-            background: '#1e293b',
-            color: '#e2e8f0',
-            fontFamily: 'inherit',
+            borderRadius: '10px', fontSize: '14px', outline: 'none',
+            background: '#1e293b', color: '#e2e8f0', fontFamily: 'inherit',
           }}
         />
 
@@ -70,20 +63,13 @@ export function Unlock() {
           onClick={handleUnlock}
           disabled={loading.value || !pw.value}
           style={{
-            width: '100%',
-            marginTop: '12px',
-            padding: '10px',
-            border: 'none',
-            borderRadius: '10px',
-            fontSize: '14px',
-            fontWeight: '600',
+            width: '100%', marginTop: '12px', padding: '10px', border: 'none',
+            borderRadius: '10px', fontSize: '14px', fontWeight: '600',
             background: loading.value ? '#475569' : 'linear-gradient(135deg, #6366f1, #8b5cf6)',
-            color: '#fff',
-            cursor: loading.value ? 'wait' : 'pointer',
-            fontFamily: 'inherit',
+            color: '#fff', cursor: loading.value ? 'wait' : 'pointer', fontFamily: 'inherit',
           }}
         >
-          {loading.value ? 'Unlocking...' : 'Unlock'}
+          {loading.value ? t('unlockLoading') : t('unlockButton')}
         </button>
       </div>
     </div>
