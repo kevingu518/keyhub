@@ -10,6 +10,14 @@ const provider = signal<ProviderId>('custom');
 const notes = signal('');
 const error = signal('');
 
+export function resetAddKeyState() {
+  keyValue.value = '';
+  label.value = '';
+  provider.value = 'custom';
+  notes.value = '';
+  error.value = '';
+}
+
 export function AddKey() {
   // Initialize form for edit mode
   if (editingKey.value && keyValue.value === '' && label.value === '') {

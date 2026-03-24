@@ -1,21 +1,37 @@
-import { keys, currentPage, editingKey, persistVault } from '../App';
+import { keys, currentPage, editingKey, persistVault, resetAutoLock } from '../App';
 import { KeyCard } from '../components/KeyCard';
 import { t } from '@/shared/i18n';
 import type { ApiKeyEntry } from '@/shared/types';
+
+const CLIPBOARD_CLEAR_MS = 30_000;
 
 export function KeyList() {
   const handleDelete = async (id: string) => {
     keys.value = keys.value.filter((k) => k.id !== id);
     await persistVault();
+    resetAutoLock();
   };
 
   const handleEdit = (key: ApiKeyEntry) => {
     editingKey.value = key;
     currentPage.value = 'edit';
+    resetAutoLock();
   };
 
   const handleCopy = async (keyValue: string) => {
     await navigator.clipboard.writeText(keyValue);
+    resetAutoLock();
+    // Auto-clear clipboard after 30 seconds
+    setTimeout(async () => {
+      try {
+        const current = await navigator.clipboard.readText();
+        if (current === keyValue) {
+          await navigator.clipboard.writeText('');
+        }
+      } catch {
+        // readText may fail without focus — silently ignore
+      }
+    }, CLIPBOARD_CLEAR_MS);
   };
 
   return (
@@ -37,7 +53,7 @@ export function KeyList() {
         </div>
         <div style={{ display: 'flex', gap: '6px' }}>
           <button
-            onClick={() => currentPage.value = 'settings'}
+            onClick={() => { currentPage.value = 'settings'; resetAutoLock(); }}
             style={{
               padding: '6px 10px', border: 'none', borderRadius: '8px',
               fontSize: '13px', background: '#1e293b', color: '#94a3b8', cursor: 'pointer',
@@ -46,7 +62,7 @@ export function KeyList() {
             ⚙
           </button>
           <button
-            onClick={() => { editingKey.value = null; currentPage.value = 'add'; }}
+            onClick={() => { editingKey.value = null; currentPage.value = 'add'; resetAutoLock(); }}
             style={{
               padding: '6px 14px', border: 'none', borderRadius: '8px',
               fontSize: '13px', fontWeight: '600', background: '#6366f1',

@@ -82,8 +82,12 @@ export function getProvider(id: ProviderId): ProviderDef | undefined {
 }
 
 export function detectProvider(keyValue: string): ProviderId {
-  for (const p of PROVIDERS) {
-    if (p.keyPattern && p.keyPattern.test(keyValue)) return p.id;
+  // Check more specific prefixes first (e.g. sk-ant- before sk-)
+  const sorted = [...PROVIDERS].filter((p) => p.keyPattern).sort(
+    (a, b) => (b.keyPrefix?.length || 0) - (a.keyPrefix?.length || 0),
+  );
+  for (const p of sorted) {
+    if (p.keyPattern!.test(keyValue)) return p.id;
   }
   return 'custom';
 }

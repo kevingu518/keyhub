@@ -11,8 +11,7 @@
   },
   "dependencies": {
     "@preact/signals": "^2.8.2",
-    "dexie": "^4.3.0",
-    "preact": "^10.29.0"
+"preact": "^10.29.0"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.4.0",

@@ -1,6 +1,4 @@
 // KeyHub Content Script — API Key field detector
-// Detects input fields that look like API Key inputs and notifies the extension
-
 // TODO Sprint 3: Implement detection rules and autofill popup
 // For now, this is a placeholder that doesn't do anything visible
 
@@ -22,7 +20,5 @@ function hasApiKeyInput(): boolean {
   return false;
 }
 
-// Only log in dev, don't spam console
-if (hasApiKeyInput()) {
-  console.log('[KeyHub] API Key input detected on this page');
-}
+// Detection result available for future Sprint 3 autofill feature
+hasApiKeyInput();

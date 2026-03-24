@@ -1,7 +1,7 @@
 import { signal } from '@preact/signals';
 import { encryptVault } from '@/shared/crypto/vault';
 import { saveVault } from '@/shared/storage/vault-store';
-import { currentPage, masterPassword, vaultSalt, keys } from '../App';
+import { currentPage, masterPassword, vaultSalt, keys, resetAutoLock } from '../App';
 import { generateSalt } from '@/shared/crypto/master-key';
 import { t } from '@/shared/i18n';
 
@@ -9,10 +9,21 @@ const pw = signal('');
 const pwConfirm = signal('');
 const error = signal('');
 
+const MIN_PASSWORD_LENGTH = 12;
+
+function checkPasswordStrength(password: string): string | null {
+  if (password.length < MIN_PASSWORD_LENGTH) return t('setupErrorShort');
+  if (!/[A-Z]/.test(password)) return t('setupErrorUppercase');
+  if (!/[a-z]/.test(password)) return t('setupErrorLowercase');
+  if (!/[0-9]/.test(password)) return t('setupErrorDigit');
+  return null;
+}
+
 export function Setup() {
   const handleCreate = async () => {
-    if (pw.value.length < 6) {
-      error.value = t('setupErrorShort');
+    const strengthError = checkPasswordStrength(pw.value);
+    if (strengthError) {
+      error.value = strengthError;
       return;
     }
     if (pw.value !== pwConfirm.value) {
@@ -28,6 +39,7 @@ export function Setup() {
     vaultSalt.value = salt;
     keys.value = [];
     currentPage.value = 'list';
+    resetAutoLock();
   };
 
   return (
@@ -56,6 +68,9 @@ export function Setup() {
           style={inputStyle}
           autoFocus
         />
+        <p style={{ fontSize: '11px', color: '#64748b', marginTop: '4px' }}>
+          {t('setupPasswordHint')}
+        </p>
         <input
           type="password"
           value={pwConfirm.value}

@@ -9,8 +9,12 @@ export const en = {
   setupPassword: 'Master Password',
   setupConfirm: 'Confirm Password',
   setupButton: 'Create Vault',
-  setupErrorShort: 'Password must be at least 6 characters',
+  setupErrorShort: 'Password must be at least 12 characters',
+  setupErrorUppercase: 'Password must contain at least one uppercase letter',
+  setupErrorLowercase: 'Password must contain at least one lowercase letter',
+  setupErrorDigit: 'Password must contain at least one digit',
   setupErrorMatch: 'Passwords do not match',
+  setupPasswordHint: 'Min 12 chars, include uppercase, lowercase, and a digit',
 
   // Unlock
   unlockTitle: 'Unlock your vault',
@@ -18,6 +22,9 @@ export const en = {
   unlockButton: 'Unlock',
   unlockLoading: 'Unlocking...',
   unlockError: 'Wrong password',
+  unlockAttemptsLeft: 'attempts left',
+  unlockLocked: 'Too many attempts — locked',
+  unlockRetryIn: 'Retry in',
 
   // Key List
   keyListTitle: 'KeyHub',

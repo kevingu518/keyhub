@@ -2,7 +2,12 @@ const PBKDF2_ITERATIONS = 100_000;
 const KEY_LENGTH = 256;
 
 function bufToBase64(buf: ArrayBuffer): string {
-  return btoa(String.fromCharCode(...new Uint8Array(buf)));
+  const bytes = new Uint8Array(buf);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
 }
 
 function base64ToBuf(b64: string): ArrayBuffer {

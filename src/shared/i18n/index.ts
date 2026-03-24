@@ -1,4 +1,4 @@
-import { signal, computed } from '@preact/signals';
+import { signal } from '@preact/signals';
 import { en } from './en';
 import { zhTW } from './zh-TW';
 

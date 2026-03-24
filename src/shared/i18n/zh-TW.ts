@@ -11,8 +11,12 @@ export const zhTW: Record<keyof typeof en, string> = {
   setupPassword: '主密碼',
   setupConfirm: '確認密碼',
   setupButton: '建立保險箱',
-  setupErrorShort: '密碼至少需要 6 個字元',
+  setupErrorShort: '密碼至少需要 12 個字元',
+  setupErrorUppercase: '密碼需包含至少一個大寫英文字母',
+  setupErrorLowercase: '密碼需包含至少一個小寫英文字母',
+  setupErrorDigit: '密碼需包含至少一個數字',
   setupErrorMatch: '兩次密碼不一致',
+  setupPasswordHint: '至少 12 字元，需含大寫、小寫英文及數字',
 
   // Unlock
   unlockTitle: '解鎖保險箱',
@@ -20,6 +24,9 @@ export const zhTW: Record<keyof typeof en, string> = {
   unlockButton: '解鎖',
   unlockLoading: '解鎖中...',
   unlockError: '密碼錯誤',
+  unlockAttemptsLeft: '次嘗試機會',
+  unlockLocked: '嘗試次數過多，已鎖定',
+  unlockRetryIn: '請等待',
 
   // Key List
   keyListTitle: 'KeyHub',
