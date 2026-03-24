@@ -1,0 +1,5 @@
+{
+  "extensionName": { "message": "KeyHub" },
+  "extensionDescription": { "message": "AI API Key 管理器 — 安全儲存、自動偵測、用量追蹤" },
+  "actionTitle": { "message": "開啟 KeyHub" }
+}
