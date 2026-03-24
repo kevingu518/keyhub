@@ -31,6 +31,7 @@ export const en = {
   keyCopied: 'Copied',
   keyEdit: 'Edit',
   keyDelete: 'Delete',
+  keyDeleteConfirm: 'Confirm?',
 
   // Add/Edit Key
   addTitle: 'Add Key',

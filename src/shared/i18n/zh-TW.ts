@@ -33,6 +33,7 @@ export const zhTW: Record<keyof typeof en, string> = {
   keyCopied: '已複製',
   keyEdit: '編輯',
   keyDelete: '刪除',
+  keyDeleteConfirm: '確定刪除？',
 
   // Add/Edit Key
   addTitle: '新增金鑰',

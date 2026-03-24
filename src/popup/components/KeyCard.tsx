@@ -11,15 +11,27 @@ interface Props {
 }
 
 const copiedId = signal<string | null>(null);
+const confirmDeleteId = signal<string | null>(null);
 
 export function KeyCard({ entry, onCopy, onEdit, onDelete }: Props) {
   const provider = getProvider(entry.provider);
   const isCopied = copiedId.value === entry.id;
+  const isConfirming = confirmDeleteId.value === entry.id;
 
   const handleCopy = () => {
     onCopy();
     copiedId.value = entry.id;
     setTimeout(() => { if (copiedId.value === entry.id) copiedId.value = null; }, 1500);
+  };
+
+  const handleDelete = () => {
+    if (isConfirming) {
+      confirmDeleteId.value = null;
+      onDelete();
+    } else {
+      confirmDeleteId.value = entry.id;
+      setTimeout(() => { if (confirmDeleteId.value === entry.id) confirmDeleteId.value = null; }, 3000);
+    }
   };
 
   return (
@@ -44,7 +56,13 @@ export function KeyCard({ entry, onCopy, onEdit, onDelete }: Props) {
           {isCopied ? `✓ ${t('keyCopied')}` : t('keyCopy')}
         </button>
         <button onClick={onEdit} style={actionBtn(false)}>{t('keyEdit')}</button>
-        <button onClick={onDelete} style={{ ...actionBtn(false), color: '#ef4444' }}>{t('keyDelete')}</button>
+        <button onClick={handleDelete} style={{
+          ...actionBtn(false),
+          color: isConfirming ? '#fff' : '#ef4444',
+          background: isConfirming ? '#ef4444' : '#0f172a',
+        }}>
+          {isConfirming ? t('keyDeleteConfirm') : t('keyDelete')}
+        </button>
       </div>
     </div>
   );
