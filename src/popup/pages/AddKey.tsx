@@ -1,4 +1,5 @@
 import { signal } from '@preact/signals';
+import { useEffect } from 'preact/hooks';
 import { keys, currentPage, editingKey, persistVault } from '../App';
 import type { ApiKeyEntry, ProviderId } from '@/shared/types';
 import { PROVIDERS, detectProvider, maskKey } from '@/shared/providers/registry';
@@ -9,6 +10,7 @@ const label = signal('');
 const provider = signal<ProviderId>('custom');
 const notes = signal('');
 const error = signal('');
+const initialized = signal<string | null>(null);
 
 export function resetAddKeyState() {
   keyValue.value = '';
@@ -16,17 +18,25 @@ export function resetAddKeyState() {
   provider.value = 'custom';
   notes.value = '';
   error.value = '';
+  initialized.value = null;
 }
 
 export function AddKey() {
-  // Initialize form for edit mode
-  if (editingKey.value && keyValue.value === '' && label.value === '') {
-    keyValue.value = editingKey.value.keyValue;
-    label.value = editingKey.value.label;
-    provider.value = editingKey.value.provider;
-    notes.value = editingKey.value.notes || '';
-    error.value = '';
-  }
+  const editId = editingKey.value?.id ?? null;
+
+  // Initialize form for edit mode — only once per editing key
+  useEffect(() => {
+    if (editingKey.value && initialized.value !== editingKey.value.id) {
+      keyValue.value = editingKey.value.keyValue;
+      label.value = editingKey.value.label;
+      provider.value = editingKey.value.provider;
+      notes.value = editingKey.value.notes || '';
+      error.value = '';
+      initialized.value = editingKey.value.id;
+    } else if (!editingKey.value) {
+      initialized.value = null;
+    }
+  }, [editId]);
 
   const isEdit = !!editingKey.value;
 
@@ -64,23 +74,26 @@ export function AddKey() {
 
     await persistVault();
     editingKey.value = null;
-    keyValue.value = ''; label.value = ''; notes.value = '';
+    resetAddKeyState();
     currentPage.value = 'list';
   };
 
   const handleCancel = () => {
     editingKey.value = null;
-    keyValue.value = ''; label.value = ''; notes.value = '';
+    resetAddKeyState();
     currentPage.value = 'list';
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '480px' }}>
+    <div
+      style={{ display: 'flex', flexDirection: 'column', minHeight: '480px' }}
+      onKeyDown={(e) => e.key === 'Escape' && handleCancel()}
+    >
       <div style={{
         padding: '12px 20px', borderBottom: '1px solid #1e293b',
         display: 'flex', alignItems: 'center', gap: '12px',
       }}>
-        <button onClick={handleCancel} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '18px' }}>←</button>
+        <button onClick={handleCancel} aria-label={t('settingsBack')} style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '18px' }}>←</button>
         <h2 style={{ fontSize: '15px', fontWeight: 600 }}>{isEdit ? t('editTitle') : t('addTitle')}</h2>
       </div>
 

@@ -2,15 +2,21 @@ import { currentPage } from '../App';
 import { t, currentLang, setLang, type Lang } from '@/shared/i18n';
 
 export function Settings() {
+  const handleBack = () => { currentPage.value = 'list'; };
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '480px' }}>
+    <div
+      style={{ display: 'flex', flexDirection: 'column', minHeight: '480px' }}
+      onKeyDown={(e) => e.key === 'Escape' && handleBack()}
+    >
       {/* Header */}
       <div style={{
         padding: '12px 20px', borderBottom: '1px solid #1e293b',
         display: 'flex', alignItems: 'center', gap: '12px',
       }}>
         <button
-          onClick={() => currentPage.value = 'list'}
+          onClick={handleBack}
+          aria-label={t('settingsBack')}
           style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '18px' }}
         >
           ←

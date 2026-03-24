@@ -1,4 +1,5 @@
 import { signal } from '@preact/signals';
+import { useEffect } from 'preact/hooks';
 import { decryptVault } from '@/shared/crypto/vault';
 import { loadVault } from '@/shared/storage/vault-store';
 import { currentPage, masterPassword, keys, vaultSalt, resetAutoLock } from '../App';
@@ -9,6 +10,7 @@ const error = signal('');
 const loading = signal(false);
 const failCount = signal(0);
 const lockedUntil = signal(0);
+const remainSec = signal(0);
 
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_MS = 60_000;
@@ -20,14 +22,27 @@ export function resetUnlockState() {
 }
 
 export function Unlock() {
-  const now = Date.now();
-  const isLocked = lockedUntil.value > now;
-  const remainSec = isLocked ? Math.ceil((lockedUntil.value - now) / 1000) : 0;
+  const isLocked = lockedUntil.value > Date.now();
 
-  // Update countdown while locked
-  if (isLocked) {
-    setTimeout(() => { lockedUntil.value = lockedUntil.value; }, 1000);
-  }
+  // Countdown timer with proper cleanup
+  useEffect(() => {
+    if (!isLocked) {
+      remainSec.value = 0;
+      return;
+    }
+    remainSec.value = Math.ceil((lockedUntil.value - Date.now()) / 1000);
+    const interval = setInterval(() => {
+      const left = Math.ceil((lockedUntil.value - Date.now()) / 1000);
+      if (left <= 0) {
+        remainSec.value = 0;
+        lockedUntil.value = 0;
+        clearInterval(interval);
+      } else {
+        remainSec.value = left;
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [isLocked]);
 
   const handleUnlock = async () => {
     if (!pw.value || isLocked) return;
@@ -76,6 +91,7 @@ export function Unlock() {
           placeholder={t('unlockPassword')}
           disabled={loading.value || isLocked}
           autoFocus
+          aria-label={t('unlockPassword')}
           style={{
             width: '100%', padding: '10px 14px',
             border: `1px solid ${error.value ? '#ef4444' : '#334155'}`,
@@ -89,7 +105,7 @@ export function Unlock() {
         )}
         {isLocked && (
           <p style={{ color: '#f59e0b', fontSize: '12px', marginTop: '4px' }}>
-            {t('unlockRetryIn')} {remainSec}s
+            {t('unlockRetryIn')} {remainSec.value}s
           </p>
         )}
 

@@ -54,6 +54,7 @@ export function KeyList() {
         <div style={{ display: 'flex', gap: '6px' }}>
           <button
             onClick={() => { currentPage.value = 'settings'; resetAutoLock(); }}
+            aria-label={t('settingsTitle')}
             style={{
               padding: '6px 10px', border: 'none', borderRadius: '8px',
               fontSize: '13px', background: '#1e293b', color: '#94a3b8', cursor: 'pointer',

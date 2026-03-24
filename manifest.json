@@ -6,7 +6,8 @@
   "default_locale": "en",
   "permissions": [
     "storage",
-    "clipboardWrite"
+    "clipboardWrite",
+    "clipboardRead"
   ],
   "background": {
     "service_worker": "src/background/service-worker.ts",
