@@ -1,7 +1,7 @@
 import { signal } from '@preact/signals';
 import { useEffect } from 'preact/hooks';
 import { decryptVault } from '@/shared/crypto/vault';
-import { loadVault } from '@/shared/storage/vault-store';
+import { loadVault, loadLockoutState, saveLockoutState } from '@/shared/storage/vault-store';
 import { currentPage, masterPassword, keys, vaultSalt, resetAutoLock } from '../App';
 import { t } from '@/shared/i18n';
 
@@ -11,6 +11,7 @@ const loading = signal(false);
 const failCount = signal(0);
 const lockedUntil = signal(0);
 const remainSec = signal(0);
+const stateLoaded = signal(false);
 
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_MS = 60_000;
@@ -24,6 +25,15 @@ export function resetUnlockState() {
 export function Unlock() {
   const isLocked = lockedUntil.value > Date.now();
 
+  // Load persisted lockout state on mount
+  useEffect(() => {
+    loadLockoutState().then((state) => {
+      failCount.value = state.failCount;
+      lockedUntil.value = state.lockedUntil;
+      stateLoaded.value = true;
+    });
+  }, []);
+
   // Countdown timer with proper cleanup
   useEffect(() => {
     if (!isLocked) {
@@ -36,6 +46,7 @@ export function Unlock() {
       if (left <= 0) {
         remainSec.value = 0;
         lockedUntil.value = 0;
+        saveLockoutState({ failCount: failCount.value, lockedUntil: 0 });
         clearInterval(interval);
       } else {
         remainSec.value = left;
@@ -58,6 +69,7 @@ export function Unlock() {
       vaultSalt.value = vault.salt;
       keys.value = decrypted;
       failCount.value = 0;
+      await saveLockoutState({ failCount: 0, lockedUntil: 0 });
       currentPage.value = 'list';
       resetAutoLock();
     } catch {
@@ -66,8 +78,10 @@ export function Unlock() {
         lockedUntil.value = Date.now() + LOCKOUT_MS;
         error.value = t('unlockLocked');
         failCount.value = 0;
+        await saveLockoutState({ failCount: 0, lockedUntil: lockedUntil.value });
       } else {
         error.value = `${t('unlockError')} (${MAX_ATTEMPTS - failCount.value} ${t('unlockAttemptsLeft')})`;
+        await saveLockoutState({ failCount: failCount.value, lockedUntil: 0 });
       }
     } finally {
       loading.value = false;

@@ -1,11 +1,25 @@
+import { useEffect } from 'preact/hooks';
 import { keys, currentPage, editingKey, persistVault, resetAutoLock } from '../App';
 import { KeyCard } from '../components/KeyCard';
 import { t } from '@/shared/i18n';
 import type { ApiKeyEntry } from '@/shared/types';
 
 const CLIPBOARD_CLEAR_MS = 30_000;
+let pendingClearTimestamp = 0;
 
 export function KeyList() {
+  // Clear clipboard when popup loses visibility (e.g. popup closing)
+  useEffect(() => {
+    const handler = () => {
+      if (document.visibilityState === 'hidden' && pendingClearTimestamp > 0) {
+        navigator.clipboard.writeText('').catch(() => {});
+        pendingClearTimestamp = 0;
+      }
+    };
+    document.addEventListener('visibilitychange', handler);
+    return () => document.removeEventListener('visibilitychange', handler);
+  }, []);
+
   const handleDelete = async (id: string) => {
     keys.value = keys.value.filter((k) => k.id !== id);
     await persistVault();
@@ -20,6 +34,7 @@ export function KeyList() {
 
   const handleCopy = async (keyValue: string) => {
     await navigator.clipboard.writeText(keyValue);
+    pendingClearTimestamp = Date.now();
     resetAutoLock();
     // Auto-clear clipboard after 30 seconds
     setTimeout(async () => {
@@ -28,8 +43,9 @@ export function KeyList() {
         if (current === keyValue) {
           await navigator.clipboard.writeText('');
         }
+        pendingClearTimestamp = 0;
       } catch {
-        // readText may fail without focus — silently ignore
+        // readText may fail without focus — cleared via visibilitychange fallback
       }
     }, CLIPBOARD_CLEAR_MS);
   };

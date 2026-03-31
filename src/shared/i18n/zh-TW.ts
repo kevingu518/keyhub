@@ -15,8 +15,9 @@ export const zhTW: Record<keyof typeof en, string> = {
   setupErrorUppercase: '密碼需包含至少一個大寫英文字母',
   setupErrorLowercase: '密碼需包含至少一個小寫英文字母',
   setupErrorDigit: '密碼需包含至少一個數字',
+  setupErrorSpecial: '密碼需包含至少一個特殊字元',
   setupErrorMatch: '兩次密碼不一致',
-  setupPasswordHint: '至少 12 字元，需含大寫、小寫英文及數字',
+  setupPasswordHint: '至少 12 字元，需含大寫、小寫英文、數字及特殊字元',
 
   // Unlock
   unlockTitle: '解鎖保險箱',

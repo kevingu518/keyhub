@@ -16,6 +16,7 @@ function checkPasswordStrength(password: string): string | null {
   if (!/[A-Z]/.test(password)) return t('setupErrorUppercase');
   if (!/[a-z]/.test(password)) return t('setupErrorLowercase');
   if (!/[0-9]/.test(password)) return t('setupErrorDigit');
+  if (!/[^A-Za-z0-9]/.test(password)) return t('setupErrorSpecial');
   return null;
 }
 

@@ -13,8 +13,9 @@ export const en = {
   setupErrorUppercase: 'Password must contain at least one uppercase letter',
   setupErrorLowercase: 'Password must contain at least one lowercase letter',
   setupErrorDigit: 'Password must contain at least one digit',
+  setupErrorSpecial: 'Password must contain at least one special character',
   setupErrorMatch: 'Passwords do not match',
-  setupPasswordHint: 'Min 12 chars, include uppercase, lowercase, and a digit',
+  setupPasswordHint: 'Min 12 chars, include uppercase, lowercase, digit, and special character',
 
   // Unlock
   unlockTitle: 'Unlock your vault',
